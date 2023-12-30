@@ -1,0 +1,6 @@
+# This can be built locally.
+*/bin/**
+*/obj/**
+
+# Ignore the .vs directory, we don't need those cached files.
+.vs/*
