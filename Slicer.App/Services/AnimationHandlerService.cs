@@ -34,11 +34,17 @@ public class AnimationHandlerService : IAnimationHandlerService
 
 		if (animationState.TimeSinceLastFrame > currentAnimation.MetaData.TimeBetweenFrames)
 		{
-			animationState.CurrentFrame++;
 
-			if (animationState.CurrentFrame == currentAnimation.MetaData.NumberOfFrames)
+			if (animationState.CurrentFrame == currentAnimation.MetaData.NumberOfFrames - 1)
 			{
-				animationState.CurrentFrame = 0;
+				if (currentAnimation.MetaData.Loop)
+				{
+					animationState.CurrentFrame = 0;
+				}
+			}
+			else
+			{
+				animationState.CurrentFrame++;
 			}
 
 			animationState.TimeSinceLastFrame = 0;
@@ -63,4 +69,37 @@ public class AnimationHandlerService : IAnimationHandlerService
 
 		currentAnimation = animations.Single(x => x.Texture == animationName);
     }
+
+    public List<Rectangle> LoadAnimationFrames(AnimationMetaData animationMetaData)
+	{
+		List<Rectangle> frames = [];
+
+		int currentYIndex = 0;
+		int currentXIndex = 0;
+
+		for (int i = 0; i < animationMetaData.NumberOfFrames; i++)
+		{
+			Rectangle frameToAdd = new()
+			{
+				X = (int)animationMetaData.FrameSize.X * currentXIndex,
+				Y = (int)animationMetaData.FrameSize.Y * currentYIndex,
+				Width = (int)animationMetaData.FrameSize.X,
+				Height = (int)animationMetaData.FrameSize.Y,
+			};
+
+			frames.Add(frameToAdd);
+
+			if (currentXIndex == animationMetaData.FramesPerRow)
+			{
+				currentXIndex = 0;
+				currentYIndex++;
+			}
+			else
+			{
+				currentXIndex++;
+			}
+		}
+
+		return frames;
+	}
 }

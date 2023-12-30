@@ -13,4 +13,6 @@ public interface IAnimationHandlerService
 	void HandleAnimationState(GameTime gameTime);
 
 	void SetCurrentAnimation(string animationName);
+
+    List<Rectangle> LoadAnimationFrames(AnimationMetaData animationMetaData);
 }

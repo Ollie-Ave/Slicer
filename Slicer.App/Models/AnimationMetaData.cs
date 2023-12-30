@@ -11,4 +11,6 @@ public record AnimationMetaData
 	public required int FramesPerRow { get; init; }
 
 	public required int TimeBetweenFrames { get; init; }
+
+	public bool Loop { get; init; } = true;
 }

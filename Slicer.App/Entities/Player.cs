@@ -13,6 +13,10 @@ public class Player : IEntity
 {
 	private const float BaseMovementSpeed = 7.5f;
 
+	private const float BaseGravityForce = 0.5f;
+
+	private const float BaseJumpForce = 12f;
+
 	private static Vector2 DefaultFrameSize = new(120, 80);
 
 	private static readonly List<Animation> animations =
@@ -39,9 +43,45 @@ public class Player : IEntity
 				TimeBetweenFrames = 70,
 			},
 		},
+		new Animation()
+		{
+			Texture = "Player/_Jump",
+			MetaData = new()
+			{
+				FrameSize = DefaultFrameSize,
+				FramesPerRow = 3,
+				NumberOfFrames = 3,
+				TimeBetweenFrames = 70,
+				Loop = false,
+			},
+		},
+		new Animation()
+		{
+			Texture = "Player/_JumpFallInbetween",
+			MetaData = new()
+			{
+				FrameSize = DefaultFrameSize,
+				FramesPerRow = 2,
+				NumberOfFrames = 2,
+				TimeBetweenFrames = 70,
+				Loop = false,
+			},
+		},
+		new Animation()
+		{
+			Texture = "Player/_Fall",
+			MetaData = new()
+			{
+				FrameSize = DefaultFrameSize,
+				FramesPerRow = 3,
+				NumberOfFrames = 3,
+				TimeBetweenFrames = 70,
+				Loop = false,
+			},
+		},
 	];
 
-    private readonly IAnimationHandlerService animationHandlerService;
+	private readonly IAnimationHandlerService animationHandlerService;
 
 	private Vector2 velocity = new(0, 0);
 
@@ -49,12 +89,12 @@ public class Player : IEntity
 
 	private SpriteEffects spriteEffects = SpriteEffects.None;
 
-    public Player(IAnimationHandlerService animationHandlerService)
+	public Player(IAnimationHandlerService animationHandlerService)
 	{
-        this.animationHandlerService = animationHandlerService;
+		this.animationHandlerService = animationHandlerService;
 
 		this.animationHandlerService.RegisterAnimations(animations);
-    }
+	}
 
 	public ContentManager? ContentManager { get; set; }
 
@@ -64,88 +104,90 @@ public class Player : IEntity
 
 		var currentAnimationData = animationHandlerService.GetCurrentAnimationData();
 		var texture = ContentManager.Load<Texture2D>(currentAnimationData.CurrentAnimation.Texture);
-		var frame = LoadAnimationFrames(currentAnimationData.CurrentAnimation.MetaData)[currentAnimationData.AnimationState.CurrentFrame];
+		var frame = animationHandlerService.LoadAnimationFrames(currentAnimationData.CurrentAnimation.MetaData)[currentAnimationData.AnimationState.CurrentFrame];
 
 		spriteBatch.Draw(texture, position, frame, Color.White, 0, Vector2.Zero, 3, spriteEffects, 0);
 	}
 
 	public void UpdateHandler(GameTime gameTime)
-    {
-        animationHandlerService.HandleAnimationState(gameTime);
-
-        velocity.X = HandleVelocity();
-
-        HandleSpriteDisplay();
-
-		position.X += velocity.X * BaseMovementSpeed;
-    }
-
-    private void HandleSpriteDisplay()
-    {
-        if (velocity.X > 0)
-        {
-            animationHandlerService.SetCurrentAnimation("Player/_Run");
-            spriteEffects = SpriteEffects.None;
-        }
-        else if (velocity.X < 0)
-        {
-            animationHandlerService.SetCurrentAnimation("Player/_Run");
-            spriteEffects = SpriteEffects.FlipHorizontally;
-        }
-        else
-        {
-            animationHandlerService.SetCurrentAnimation("Player/_Idle");
-        }
-    }
-
-    private float HandleVelocity()
-    {
-        var keyboard = Keyboard.GetState();
-
-		Vector2 velocity = new(0, 0);
-
-        if (keyboard.IsKeyDown(Keys.D))
-        {
-            velocity.X += 1;
-        }
-        if (keyboard.IsKeyDown(Keys.A))
-        {
-            velocity.X -= 1;
-        }
-
-		return velocity.X;
-    }
-
-    private List<Rectangle> LoadAnimationFrames(AnimationMetaData animationMetaData)
 	{
-		List<Rectangle> frames = [];
+		animationHandlerService.HandleAnimationState(gameTime);
 
-		int currentYIndex = 0;
-		int currentXIndex = 0;
+		HandleVelocity();
+		HandleSpriteDisplayDirection();
+		HandleSpriteAnimation();
 
-		for (int i = 0; i < animationMetaData.NumberOfFrames; i++)
+		position += new Vector2(velocity.X * BaseMovementSpeed, velocity.Y);
+	}
+
+	private void HandleSpriteDisplayDirection()
+	{
+		if (velocity.X > 0)
 		{
-			Rectangle frameToAdd = new()
-			{
-				X = (int)animationMetaData.FrameSize.X * currentXIndex,
-				Y = (int)animationMetaData.FrameSize.Y * currentYIndex,
-				Width = (int)animationMetaData.FrameSize.X,
-				Height = (int)animationMetaData.FrameSize.Y,
-			};
+			spriteEffects = SpriteEffects.None;
+		}
+		else if (velocity.X < 0)
+		{
+			spriteEffects = SpriteEffects.FlipHorizontally;
+		}
+	}
 
-			frames.Add(frameToAdd);
+	private void HandleSpriteAnimation()
+	{
 
-			if (currentXIndex == animationMetaData.FramesPerRow)
-			{
-				currentXIndex = 0;
-				currentYIndex++;
-			}
-			else
-			{
-				currentXIndex++;
-			}
+		if (velocity.Y != 0 && velocity.Y < 0.1f)
+		{
+			animationHandlerService.SetCurrentAnimation("Player/_Jump");
+		}
+		else if (velocity.Y > -4f && velocity.Y < 4f && position.Y < 300)
+		{
+			animationHandlerService.SetCurrentAnimation("Player/_JumpFallInbetween");
+		}
+		else if (velocity.Y != 0 && velocity.Y > 0.1f)
+		{
+			animationHandlerService.SetCurrentAnimation("Player/_Fall");
+		}
+		else if (velocity.X > 0)
+		{
+			animationHandlerService.SetCurrentAnimation("Player/_Run");
+		}
+		else if (velocity.X < 0)
+		{
+			animationHandlerService.SetCurrentAnimation("Player/_Run");
+		}
+		else
+		{
+			animationHandlerService.SetCurrentAnimation("Player/_Idle");
+		}
+	}
+
+	private void HandleVelocity()
+	{
+		var keyboard = Keyboard.GetState();
+
+		velocity.X = 0;
+
+		if (keyboard.IsKeyDown(Keys.D))
+		{
+			velocity.X += 1;
 		}
 
-		return frames;
+		if (keyboard.IsKeyDown(Keys.A))
+		{
+			velocity.X -= 1;
+		}
+
+		if (keyboard.IsKeyDown(Keys.Space) && position.Y > 300)
+		{
+			velocity.Y -= BaseJumpForce;
+		}
+		else if (position.Y > 300)
+		{
+			velocity.Y = 0;
+		}
+		else
+		{
+			velocity.Y += BaseGravityForce;
+		}
 	}
 }
