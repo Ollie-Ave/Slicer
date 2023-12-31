@@ -9,6 +9,8 @@ public interface IEntityManagerService
 
 	Dictionary<string, IEntity> GetAllEntities();
 
-	T CreateEntity<T>(string entityName, ContentManager contentManager)
+	T CreateEntity<T>(string entityName)
 		where T : IEntity;
+
+	void KillEntity(string entityName);
 }

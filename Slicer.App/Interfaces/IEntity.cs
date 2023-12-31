@@ -6,7 +6,7 @@ namespace Slicer.App.Interfaces;
 
 public interface IEntity
 {
-	ContentManager? ContentManager { get; set; }
+	string? EntityName { get; set; }
 
 	void Draw(SpriteBatch spriteBatch);
 

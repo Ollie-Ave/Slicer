@@ -1,4 +1,9 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"c:/Users/olive/code/Slicer/Slicer.App/Content/Goblin/_Attack.png","c:/Users/olive/code/Slicer/Slicer.App/Content/bin/DesktopGL/Goblin/_Attack.xnb","TextureProcessor","Texture2DContent",4967,720085,0.1977513
+"c:/Users/olive/code/Slicer/Slicer.App/Content/Goblin/_Death.png","c:/Users/olive/code/Slicer/Slicer.App/Content/bin/DesktopGL/Goblin/_Death.xnb","TextureProcessor","Texture2DContent",2935,360085,0.0121185
+"c:/Users/olive/code/Slicer/Slicer.App/Content/Goblin/_Idle.png","c:/Users/olive/code/Slicer/Slicer.App/Content/bin/DesktopGL/Goblin/_Idle.xnb","TextureProcessor","Texture2DContent",2573,360085,0.0115209
+"c:/Users/olive/code/Slicer/Slicer.App/Content/Goblin/_Run.png","c:/Users/olive/code/Slicer/Slicer.App/Content/bin/DesktopGL/Goblin/_Run.xnb","TextureProcessor","Texture2DContent",4883,720085,0.0329659
+"c:/Users/olive/code/Slicer/Slicer.App/Content/Goblin/_TakeHit.png","c:/Users/olive/code/Slicer/Slicer.App/Content/bin/DesktopGL/Goblin/_TakeHit.xnb","TextureProcessor","Texture2DContent",3039,360085,0.1544771
 "c:/Users/olive/code/Slicer/Slicer.App/Content/Player/_Attack.png","c:/Users/olive/code/Slicer/Slicer.App/Content/bin/DesktopGL/Player/_Attack.xnb","TextureProcessor","Texture2DContent",1741,153685,0.1769685
 "c:/Users/olive/code/Slicer/Slicer.App/Content/Player/_Attack2.png","c:/Users/olive/code/Slicer/Slicer.App/Content/bin/DesktopGL/Player/_Attack2.xnb","TextureProcessor","Texture2DContent",2025,230485,0.0095139
 "c:/Users/olive/code/Slicer/Slicer.App/Content/Player/_Attack2NoMovement.png","c:/Users/olive/code/Slicer/Slicer.App/Content/bin/DesktopGL/Player/_Attack2NoMovement.xnb","TextureProcessor","Texture2DContent",2024,230485,0.0084065

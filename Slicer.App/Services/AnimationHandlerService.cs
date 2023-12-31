@@ -9,14 +9,14 @@ namespace Slicer.App.Services;
 
 public class AnimationHandlerService : IAnimationHandlerService
 {
-	private static readonly AnimationState animationState = new();
+	private readonly List<Animation> animations;
 
-	private List<Animation> animations = new();
+	private readonly AnimationState animationState = new();
 
-	private Animation? currentAnimation;
+	private Animation currentAnimation;
 
-    public void RegisterAnimations(List<Animation> animations)
-    {
+	public AnimationHandlerService(List<Animation> animations)
+	{
 		this.animations = animations;
 		this.currentAnimation = animations[0];
 	}

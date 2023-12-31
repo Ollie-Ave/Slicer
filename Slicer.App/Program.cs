@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Slicer.App.Builders;
 using Slicer.App.Interfaces;
 using Slicer.App.Services;
 
@@ -17,7 +18,7 @@ public class Program
         services.AddSingleton<SlicerGame>();
         services.AddSingleton<IEntityManagerService, EntityManagerService>();
 
-        services.AddTransient<IAnimationHandlerService, AnimationHandlerService>();
+        services.AddTransient<IAnimationHandlerServiceBuilder, AnimationHandlerServiceBuilder>();
 
         services = RegisterEntities(services);
 

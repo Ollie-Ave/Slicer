@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Slicer.App.Accessors;
 using Slicer.App.Entities;
 using Slicer.App.Interfaces;
 
@@ -32,7 +33,10 @@ public class SlicerGame : Game
 
     protected override void Initialize()
     {
-        entityManagerService.CreateEntity<Player>("Player", Content);
+        ContentManagerAccessor.SetContentManager(Content);
+
+        entityManagerService.CreateEntity<Player>("Player");
+        entityManagerService.CreateEntity<Goblin>("Goblin");
 
         base.Initialize();
     }

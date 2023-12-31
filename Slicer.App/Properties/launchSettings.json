@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Slicer.App": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DEBUG": "true"
+      }
+    }
+  }
+}

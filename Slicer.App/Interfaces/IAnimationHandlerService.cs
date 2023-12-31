@@ -6,8 +6,6 @@ namespace Slicer.App.Interfaces;
 
 public interface IAnimationHandlerService
 {
-    void RegisterAnimations(List<Animation> animations);
-
 	(Animation CurrentAnimation, AnimationState AnimationState) GetCurrentAnimationData();
 
 	void HandleAnimationState(GameTime gameTime);
