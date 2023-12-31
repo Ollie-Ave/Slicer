@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame;
 using Slicer.App.Accessors;
 using Slicer.App.Entities;
 using Slicer.App.Interfaces;
@@ -38,6 +39,9 @@ public class SlicerGame : Game
         entityManagerService.CreateEntity<Player>("Player");
         entityManagerService.CreateEntity<Goblin>("Goblin");
 
+        var gobline = entityManagerService.CreateEntity<Goblin>("Goblin");
+        gobline.SetXPosition(600);
+
         base.Initialize();
     }
 
@@ -54,6 +58,15 @@ public class SlicerGame : Game
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
+
+        if (Keyboard.GetState().IsKeyDown(Keys.R))
+        {
+
+        entityManagerService.CreateEntity<Goblin>("Goblin");
+
+        var gobline = entityManagerService.CreateEntity<Goblin>("Goblin");
+        gobline.SetXPosition(600);
+        }
 
         var entities = entityManagerService
             .GetAllEntities()
@@ -85,6 +98,8 @@ public class SlicerGame : Game
         {
             entity.Draw(spriteBatch);
         }
+
+        spriteBatch.DrawLine(new Vector2(0, Constants.FloorHeight), new Vector2(1280, Constants.FloorHeight), Color.Red);
 
         spriteBatch.End();
 

@@ -11,6 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slicer.Services", "Slicer.Services\Slicer.Services.csproj", "{EA8F56AD-3FF3-467B-8FA8-B9974363F776}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slicer.Shared", "Slicer.Shared\Slicer.Shared.csproj", "{9FAA3575-55D9-4102-B2D1-FEE03F2C9A70}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{BB5B6067-97EA-4A10-8DFB-7AABD5D58BE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB5B6067-97EA-4A10-8DFB-7AABD5D58BE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB5B6067-97EA-4A10-8DFB-7AABD5D58BE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA8F56AD-3FF3-467B-8FA8-B9974363F776}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA8F56AD-3FF3-467B-8FA8-B9974363F776}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA8F56AD-3FF3-467B-8FA8-B9974363F776}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA8F56AD-3FF3-467B-8FA8-B9974363F776}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FAA3575-55D9-4102-B2D1-FEE03F2C9A70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FAA3575-55D9-4102-B2D1-FEE03F2C9A70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FAA3575-55D9-4102-B2D1-FEE03F2C9A70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FAA3575-55D9-4102-B2D1-FEE03F2C9A70}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

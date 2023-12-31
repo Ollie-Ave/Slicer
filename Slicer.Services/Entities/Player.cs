@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Reflection.Metadata;
-using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoGame;
 using Slicer.App.Accessors;
 using Slicer.App.Interfaces;
 using Slicer.App.Models;
@@ -23,7 +17,13 @@ public class Player : IEntity, ITexturedEntity
 
 	private const int SpriteScaling = 3;
 
-	private const int AttackReach = 300;
+	private const int AttackReach = 350;
+
+	private const int AttackCooldownDuration = 500;
+
+	private const int AttackDashDuration = 150;
+
+	private const float BaseDamage = 10f;
 
 	private static Vector2 DefaultFrameSize = new(120, 80);
 
@@ -87,6 +87,18 @@ public class Player : IEntity, ITexturedEntity
 				Loop = false,
 			},
 		},
+		new Animation()
+		{
+			Texture = "Player/_Attack",
+			MetaData = new()
+			{
+				FrameSize = DefaultFrameSize,
+				FramesPerRow = 4,
+				NumberOfFrames = 4,
+				TimeBetweenFrames = 100,
+				Loop = false,
+			},
+		},
 	];
 
 	private readonly IAnimationHandlerService animationHandlerService;
@@ -98,6 +110,12 @@ public class Player : IEntity, ITexturedEntity
 	private Vector2 position = new(0, 000);
 
 	private SpriteEffects spriteEffects = SpriteEffects.None;
+
+	private Rectangle hitbox;
+
+	private int attackCooldown;
+
+	private int attackDashCooldown;
 
 	public Player(IAnimationHandlerServiceBuilder animationHandlerServiceBuilder, IEntityManagerService entityManagerService)
 	{
@@ -136,32 +154,83 @@ public class Player : IEntity, ITexturedEntity
 	{
 		animationHandlerService.HandleAnimationState(gameTime);
 
+		UpdateHitbox();
+
 		if (Environment.GetEnvironmentVariable("DEBUG") == "true")
 		{
 			DrawHitBox();
 		}
 
 		HandleMovement();
-		HandleAttack();
+		HandleAttack(gameTime);
 		HandleSpriteDisplayDirection();
 		HandleSpriteAnimation();
 
-		position += new Vector2(velocity.X * BaseMovementSpeed, velocity.Y);
+		velocity.Y = Math.Clamp(velocity.Y, -15, 15);
+		velocity.X = Math.Clamp(velocity.X, -25, 25);
+
+		position += velocity;
+	}
+
+	private void UpdateHitbox()
+	{
+		hitbox.X = (int)position.X + 110;
+		hitbox.Y = (int)position.Y + 80;
+		hitbox.Width = 140;
+		hitbox.Height = 160;
 	}
 
 	private void DrawHitBox()
 	{
-		var entitySize = GetCurrentAnimationFrame();
-		var debugBox2 = entityManagerService.CreateEntity<DebugBox>("Player_Hitbox");
+		var debugBox1 = entityManagerService.CreateEntity<SingleFrameDebugBox>("Player_Hitbox");
 
-		debugBox2.Bounds = new Rectangle((int)position.X, (int)position.Y, entitySize.Width * SpriteScaling, entitySize.Height * SpriteScaling);
+		debugBox1.Colour = Color.Green;
+		debugBox1.Bounds = hitbox;
 	}
 
-	private void HandleAttack()
+	private void HandleAttack(GameTime gameTime)
 	{
+		const float KnockBackMultiplier = 3.2f;
 		var mouse = Mouse.GetState();
 
-		if (mouse.LeftButton == ButtonState.Pressed)
+		if (attackCooldown > 0)
+		{
+			attackCooldown = (int)MathF.Max(0, attackCooldown - gameTime.ElapsedGameTime.Milliseconds);
+			attackDashCooldown = (int)MathF.Max(0, attackDashCooldown - gameTime.ElapsedGameTime.Milliseconds);
+		}
+
+		if (attackDashCooldown > 0)
+		{
+			var enemies = entityManagerService
+				.GetAllEntities()
+				.Where(x => x.Value is IEnemy)
+				.Select(x => (IEnemy)x.Value)
+				.ToList();
+
+			foreach (var enemy in enemies)
+			{
+				var enemyHitbox = enemy.GetHitbox();
+
+				if (enemyHitbox.Intersects(hitbox))
+				{
+					var mousePosition = new Vector2(mouse.X, mouse.Y);
+
+					var currentTexture = GetCurrentAnimationFrame();
+
+					var origin = position + new Vector2(currentTexture.Width * SpriteScaling / 2, currentTexture.Height * SpriteScaling / 3 * 2);
+
+					Vector2 directionVector = mousePosition - origin;
+					Vector2 normalizedDirectionVector = Vector2.Normalize(directionVector);
+
+					normalizedDirectionVector *= -1;
+
+					velocity += normalizedDirectionVector * KnockBackMultiplier * BaseMovementSpeed;
+					velocity.Y = MathF.Min(velocity.Y, 1.5f);
+				}
+			}
+		}
+
+		if (mouse.LeftButton == ButtonState.Pressed && attackCooldown == 0)
 		{
 			var mousePosition = new Vector2(mouse.X, mouse.Y);
 
@@ -169,9 +238,15 @@ public class Player : IEntity, ITexturedEntity
 
 			var origin = position + new Vector2(currentTexture.Width * SpriteScaling / 2, currentTexture.Height * SpriteScaling / 3 * 2);
 
-			Vector2 directionVector =  mousePosition - origin;
+			Vector2 directionVector = mousePosition - origin;
 			Vector2 normalizedDirectionVector = Vector2.Normalize(directionVector);
 			Vector2 rayPosition = origin + AttackReach * normalizedDirectionVector;
+
+			Rectangle attackHitBox = new(
+					(int)MathF.Min(origin.X, rayPosition.X),
+					(int)MathF.Min(origin.Y, rayPosition.Y),
+					(int)(MathF.Max(origin.X, rayPosition.X) - MathF.Min(origin.X, rayPosition.X)),
+					(int)(MathF.Max(origin.Y, rayPosition.Y) - MathF.Min(origin.Y, rayPosition.Y)));
 
 			if (Environment.GetEnvironmentVariable("DEBUG") == "true")
 			{
@@ -179,6 +254,32 @@ public class Player : IEntity, ITexturedEntity
 
 				debugLine.point1 = origin;
 				debugLine.point2 = rayPosition;
+
+				var debugBox = entityManagerService.CreateEntity<DebugBox>("DebugBo2");
+				debugBox.Bounds = attackHitBox;
+			}
+
+			attackCooldown = AttackCooldownDuration;
+			attackDashCooldown = AttackDashDuration;
+			velocity += normalizedDirectionVector * KnockBackMultiplier * BaseMovementSpeed;
+			Math.Clamp(velocity.Y, -7.5f, 7.5f);
+
+			animationHandlerService.SetCurrentAnimation("Player/_Attack");
+
+			var enemies = entityManagerService
+				.GetAllEntities()
+				.Where(x => x.Value is IEnemy)
+				.Select(x => (IEnemy)x.Value)
+				.ToList();
+
+			foreach (var enemy in enemies)
+			{
+				var enemyHitbox = enemy.GetHitbox();
+
+				if (enemyHitbox.Intersects(attackHitBox))
+				{
+					enemy.TakeDamage(BaseDamage);
+				}
 			}
 		}
 	}
@@ -198,7 +299,12 @@ public class Player : IEntity, ITexturedEntity
 	private void HandleSpriteAnimation()
 	{
 
-		if (velocity.Y != 0 && velocity.Y < 0.1f)
+		if (attackDashCooldown > 0)
+		{
+			return;
+		}
+
+		if (velocity.Y != 0 && velocity.Y < 1f)
 		{
 			animationHandlerService.SetCurrentAnimation("Player/_Jump");
 		}
@@ -206,7 +312,7 @@ public class Player : IEntity, ITexturedEntity
 		{
 			animationHandlerService.SetCurrentAnimation("Player/_JumpFallInbetween");
 		}
-		else if (velocity.Y != 0 && velocity.Y > 0.1f)
+		else if (velocity.Y != 0 && velocity.Y > 1f)
 		{
 			animationHandlerService.SetCurrentAnimation("Player/_Fall");
 		}
@@ -227,41 +333,52 @@ public class Player : IEntity, ITexturedEntity
 	private void HandleMovement()
 	{
 		var keyboard = Keyboard.GetState();
+		var mouse = Mouse.GetState();
 
-		velocity.X = 0;
-
-		if (keyboard.IsKeyDown(Keys.D))
+		if (attackDashCooldown == 0)
 		{
-			velocity.X += 1;
+			if (velocity.X > 0 && velocity.X != 0)
+			{
+				velocity.X = MathF.Max(BaseMovementSpeed, velocity.X);
+				velocity.X = MathF.Min(0, velocity.X - BaseMovementSpeed);
+			}
+			else if (velocity.X < 0 && velocity.X != 0)
+			{
+				velocity.X = MathF.Min(-BaseMovementSpeed, velocity.X);
+				velocity.X = MathF.Max(0, velocity.X + BaseMovementSpeed);
+			}
 		}
 
-		if (keyboard.IsKeyDown(Keys.A))
+		if (mouse.LeftButton != ButtonState.Pressed && keyboard.IsKeyDown(Keys.D))
 		{
-			velocity.X -= 1;
+			velocity.X += BaseMovementSpeed;
 		}
 
-		if (keyboard.IsKeyDown(Keys.Space) && PlayerIsTouchingGround())
+		if (mouse.LeftButton != ButtonState.Pressed && keyboard.IsKeyDown(Keys.A))
+		{
+			velocity.X -= BaseMovementSpeed;
+		}
+
+		if (mouse.LeftButton != ButtonState.Pressed && keyboard.IsKeyDown(Keys.Space) && PlayerIsTouchingGround())
 		{
 			velocity.Y -= BaseJumpForce;
 		}
 		else if (PlayerIsTouchingGround())
 		{
 			velocity.Y = 0;
-			position.Y = 300 - GetCurrentAnimationFrame().Height;
+			position.Y = Constants.FloorHeight - (GetCurrentAnimationFrame().Height * SpriteScaling);
 		}
 		else
 		{
 			velocity.Y += BaseGravityForce;
 		}
-
-
 	}
 
 	private bool PlayerIsTouchingGround()
 	{
 		var texture = GetCurrentAnimationFrame();
 
-		return position.Y + texture.Height >= 300f;
+		return position.Y + (texture.Height * SpriteScaling) >= Constants.FloorHeight;
 	}
 
 	private Rectangle GetCurrentAnimationFrame()

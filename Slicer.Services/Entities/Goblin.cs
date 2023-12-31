@@ -1,17 +1,20 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Slicer.App.Accessors;
-using Slicer.App.Constants;
 using Slicer.App.Interfaces;
 using Slicer.App.Models;
 
 namespace Slicer.App.Entities;
 
-internal class Goblin :IEntity, ITexturedEntity
+public class Goblin :IEntity, ITexturedEntity, IEnemy
 {
 	private const int SpriteScaling = 2;
+
+	private float health = 30f;
+
+	private const int HurtAnimationCooldownDuration = 310;
+
+	private int hurtAnimationCooldown;
 
 	private static Vector2 DefaultFrameSize = new(150, 150);
 
@@ -58,7 +61,7 @@ internal class Goblin :IEntity, ITexturedEntity
 				FrameSize = DefaultFrameSize,
 				FramesPerRow = 4,
 				NumberOfFrames = 4,
-				TimeBetweenFrames = 100,
+				TimeBetweenFrames = 70,
 			},
 		},
 		new Animation()
@@ -69,16 +72,20 @@ internal class Goblin :IEntity, ITexturedEntity
 				FrameSize = DefaultFrameSize,
 				FramesPerRow = 4,
 				NumberOfFrames = 4,
-				TimeBetweenFrames = 100,
+				TimeBetweenFrames = 70,
 			},
 		},
 	];
 
 	private readonly IAnimationHandlerService animationHandlerService;
+
     private readonly IEntityManagerService entityManagerService;
+
     private SpriteEffects spriteEffects = SpriteEffects.None;
 
-	private Vector2 position = new(0, WorldConstants.FloorHeight);
+	private Vector2 position;
+
+	private Rectangle hitbox;
 
 	public Goblin(IAnimationHandlerServiceBuilder animationHandlerServiceBuilder, IEntityManagerService entityManagerService)
     {
@@ -93,11 +100,43 @@ internal class Goblin :IEntity, ITexturedEntity
 
     public void UpdateHandler(GameTime gameTime)
     {
+		ArgumentNullException.ThrowIfNull(EntityName);
+
+		var frame = GetCurrentAnimationFrame();
+        position = new Vector2(position.X, Constants.FloorHeight - frame.Height * SpriteScaling);
+
+		// This is a hack to get around the weird textures I've put in :)
+		position.Y += 100;
+
 		animationHandlerService.HandleAnimationState(gameTime);
+
+		UpdateHitbox();
 
 		if (Environment.GetEnvironmentVariable("DEBUG") == "true")
 		{
 			DrawHitBox();
+		}
+
+		if (hurtAnimationCooldown == 0)
+		{
+			if (health <= 0 && animationHandlerService.GetCurrentAnimationData().CurrentAnimation.Texture != "Goblin/_Death")
+			{
+				animationHandlerService.SetCurrentAnimation("Goblin/_Death");
+
+				hurtAnimationCooldown = HurtAnimationCooldownDuration;
+			}
+			else if (health <= 0)
+			{
+				entityManagerService.KillEntity(EntityName);
+			}
+			else if (animationHandlerService.GetCurrentAnimationData().CurrentAnimation.Texture != "Goblin/_Idle")
+			{
+				animationHandlerService.SetCurrentAnimation("Goblin/_Idle");
+			}
+		}
+		else if (hurtAnimationCooldown > 0)
+		{
+			hurtAnimationCooldown = Math.Max(hurtAnimationCooldown - gameTime.ElapsedGameTime.Milliseconds, 0);
 		}
     }
 
@@ -133,9 +172,39 @@ internal class Goblin :IEntity, ITexturedEntity
 
 	private void DrawHitBox()
 	{
-		var entitySize = GetCurrentAnimationFrame();
-		var debugBox2 = entityManagerService.CreateEntity<DebugBox>("Goblin_Hitbox");
+		var debugBox1 = entityManagerService.CreateEntity<SingleFrameDebugBox>("Goblin_Hitbox");
 
-		debugBox2.Bounds = new Rectangle((int)position.X, (int)position.Y, entitySize.Width * SpriteScaling, entitySize.Height * SpriteScaling);
+		debugBox1.Colour = Color.Green;
+		debugBox1.Bounds = hitbox;
 	}
+
+    private void UpdateHitbox()
+    {
+		  hitbox.X = (int) position.X + 110;
+		  hitbox.Y = (int) position.Y + 100;
+		  hitbox.Width = 75;
+		  hitbox.Height = 100;
+    }
+
+    public Rectangle GetHitbox()
+    {
+		  return hitbox;
+    }
+
+    public void TakeDamage(float damage)
+    {
+		  if (hurtAnimationCooldown == 0)
+		  {
+			health -= damage;
+
+			animationHandlerService.SetCurrentAnimation( "Goblin/_TakeHit");
+
+			hurtAnimationCooldown = HurtAnimationCooldownDuration;
+		  }
+    }
+
+    public void SetXPosition(int position)
+    {
+		  this.position.X = position;
+    }
 }

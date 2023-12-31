@@ -8,7 +8,9 @@ namespace Slicer.App.Entities;
 
 public class DebugBox : IEntity
 {
+	private const int timeToLive = 2000;
     private readonly IEntityManagerService entityManagerService;
+    private int timeAlive = 0;
 
     public string? EntityName { get; set; }
 
@@ -30,6 +32,11 @@ public class DebugBox : IEntity
     {
 		ArgumentNullException.ThrowIfNull(EntityName);
 
-		entityManagerService.KillEntity(EntityName);
+		if (timeAlive > timeToLive)
+		{
+			entityManagerService.KillEntity(EntityName);
+		}
+
+		timeAlive += gameTime.ElapsedGameTime.Milliseconds;
     }
 }
