@@ -8,7 +8,7 @@ namespace Slicer.App.Entities;
 
 public class DebugBox : IEntity
 {
-	private const int timeToLive = 2000;
+	private const int timeToLive = 2500;
     private readonly IEntityManagerService entityManagerService;
     private int timeAlive = 0;
 

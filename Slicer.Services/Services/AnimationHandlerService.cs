@@ -102,4 +102,11 @@ public class AnimationHandlerService : IAnimationHandlerService
 
 		return frames;
 	}
+
+	public Rectangle GetCurrentAnimationFrame()
+	{
+		var currentAnimationData = GetCurrentAnimationData();
+
+		return LoadAnimationFrames(currentAnimationData.CurrentAnimation.MetaData)[currentAnimationData.AnimationState.CurrentFrame];
+	}
 }

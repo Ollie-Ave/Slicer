@@ -1,35 +1,72 @@
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Slicer.App.Accessors;
 using Slicer.App.Interfaces;
 
 namespace Slicer.App.Entities;
 
-public class PlayerNew : IEntity, ITexturedEntity
+public partial class PlayerNew : IEntity, ITexturedEntity
 {
-	   public PlayerNew(IAnimationHandlerServiceBuilder an)
-	   {
+    private readonly IPhysicsHandlerService physicsHandlerService;
 
-	   }
+    private readonly IAnimationHandlerService animationHandlerService;
 
-    public string? EntityName { get; set; }
+    private readonly IEntityManagerService entityManagerService;
 
-    public void Draw(SpriteBatch spriteBatch)
-    {
-		// ArgumentNullException.ThrowIfNull(Textures);
+    private readonly IAttackHandlerService attackHandlerService;
 
-		// var currentAnimationData = animationHandlerService.GetCurrentAnimationData();
-		// var texture = Textures[currentAnimationData.CurrentAnimation.Texture];
-		// var frame = GetCurrentAnimationFrame();
+    private SpriteEffects spriteEffects = SpriteEffects.None;
 
-		// spriteBatch.Draw(texture, position, frame, Color.White, 0, Vector2.Zero, SpriteScaling, spriteEffects, 0);
+    public PlayerNew(
+		IAnimationHandlerServiceBuilder animationHandlerServiceBuilder,
+		IPhysicsHandlerServiceBuilder physicsHandlerServiceBuilder,
+		IEntityManagerService entityManagerService,
+		IAttackHandlerServiceBuilder attackHandlerServiceBuilder)
+	{
+		physicsHandlerService = physicsHandlerServiceBuilder.Build(
+			new Vector2(0, 0),
+			HitBoxDimensions,
+			SpriteScaling);
+        animationHandlerService = animationHandlerServiceBuilder.Build(animations);
+        this.attackHandlerService = attackHandlerServiceBuilder.Build(AttackCooldownDuration, AttackDuration);
+
+        this.entityManagerService = entityManagerService;
     }
 
-    public void LoadTextures()
-    {
-    }
+	public string? EntityName { get; set; }
 
-    public void UpdateHandler(GameTime gameTime)
-    {
-    }
+	public void Draw(SpriteBatch spriteBatch)
+	{
+		ArgumentNullException.ThrowIfNull(Textures);
+
+		var currentAnimationData = animationHandlerService.GetCurrentAnimationData();
+		var texture = Textures[currentAnimationData.CurrentAnimation.Texture];
+		var frame = animationHandlerService.GetCurrentAnimationFrame();
+
+		const float NoRotation = 0;
+		const int TopLayer = 1;
+
+		spriteBatch.Draw(
+			texture,
+			physicsHandlerService.GetNextPosition(),
+			frame,
+			Color.White,
+			NoRotation,
+			Vector2.Zero,
+			SpriteScaling,
+			spriteEffects,
+			TopLayer);
+	}
+
+	public void LoadTextures()
+	{
+		var content = ContentManagerAccessor.GetContentManager();
+
+		foreach (var animation in animations)
+		{
+			Textures ??= [];
+
+			Textures.Add(animation.Texture, content.Load<Texture2D>(animation.Texture));
+		}
+	}
 }

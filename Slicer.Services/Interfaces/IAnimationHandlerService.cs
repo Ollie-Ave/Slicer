@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Slicer.App.Models;
 
@@ -13,4 +12,6 @@ public interface IAnimationHandlerService
 	void SetCurrentAnimation(string animationName);
 
     List<Rectangle> LoadAnimationFrames(AnimationMetaData animationMetaData);
+
+	Rectangle GetCurrentAnimationFrame();
 }

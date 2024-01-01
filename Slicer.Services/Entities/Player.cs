@@ -156,7 +156,7 @@ public class Player : IEntity, ITexturedEntity
 
 		UpdateHitbox();
 
-		if (Environment.GetEnvironmentVariable("DEBUG") == "true")
+		if (GameEnvironment.IsDebugMode)
 		{
 			DrawHitBox();
 		}
@@ -209,7 +209,7 @@ public class Player : IEntity, ITexturedEntity
 
 			foreach (var enemy in enemies)
 			{
-				var enemyHitbox = enemy.GetHitbox();
+				var enemyHitbox = enemy.GetHitBox();
 
 				if (enemyHitbox.Intersects(hitbox))
 				{
@@ -248,12 +248,12 @@ public class Player : IEntity, ITexturedEntity
 					(int)(MathF.Max(origin.X, rayPosition.X) - MathF.Min(origin.X, rayPosition.X)),
 					(int)(MathF.Max(origin.Y, rayPosition.Y) - MathF.Min(origin.Y, rayPosition.Y)));
 
-			if (Environment.GetEnvironmentVariable("DEBUG") == "true")
+			if (GameEnvironment.IsDebugMode)
 			{
 				var debugLine = entityManagerService.CreateEntity<DebugLine>("DebugLine");
 
-				debugLine.point1 = origin;
-				debugLine.point2 = rayPosition;
+				debugLine.StartPosition = origin;
+				debugLine.EndPosition = rayPosition;
 
 				var debugBox = entityManagerService.CreateEntity<DebugBox>("DebugBo2");
 				debugBox.Bounds = attackHitBox;
@@ -274,7 +274,7 @@ public class Player : IEntity, ITexturedEntity
 
 			foreach (var enemy in enemies)
 			{
-				var enemyHitbox = enemy.GetHitbox();
+				var enemyHitbox = enemy.GetHitBox();
 
 				if (enemyHitbox.Intersects(attackHitBox))
 				{

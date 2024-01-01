@@ -112,7 +112,7 @@ public class Goblin :IEntity, ITexturedEntity, IEnemy
 
 		UpdateHitbox();
 
-		if (Environment.GetEnvironmentVariable("DEBUG") == "true")
+		if (GameEnvironment.IsDebugMode)
 		{
 			DrawHitBox();
 		}
@@ -186,7 +186,7 @@ public class Goblin :IEntity, ITexturedEntity, IEnemy
 		  hitbox.Height = 100;
     }
 
-    public Rectangle GetHitbox()
+    public Rectangle GetHitBox()
     {
 		  return hitbox;
     }

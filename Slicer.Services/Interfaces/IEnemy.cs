@@ -4,7 +4,7 @@ namespace Slicer.App.Interfaces;
 
 public interface IEnemy
 {
-	Rectangle GetHitbox();
+	Rectangle GetHitBox();
 
 	void TakeDamage(float damage);
 

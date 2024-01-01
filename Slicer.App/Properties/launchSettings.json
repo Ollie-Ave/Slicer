@@ -3,7 +3,7 @@
     "Slicer.App": {
       "commandName": "Project",
       "environmentVariables": {
-        "DEBUG": "false",
+        "DEBUG": "true",
       }
     }
   }

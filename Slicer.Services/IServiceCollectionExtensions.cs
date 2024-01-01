@@ -12,6 +12,8 @@ public static class IServiceCollectionExtensions
 		services.AddSingleton<IEntityManagerService, EntityManagerService>();
 
 		services.AddTransient<IAnimationHandlerServiceBuilder, AnimationHandlerServiceBuilder>();
+		services.AddTransient<IPhysicsHandlerServiceBuilder, PhysicsHandlerServiceBuilder>();
+		services.AddTransient<IAttackHandlerServiceBuilder, AttackHandlerServiceBuilder>();
 
 		return services;
 	}
