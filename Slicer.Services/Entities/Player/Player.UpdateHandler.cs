@@ -1,4 +1,3 @@
-using System.Formats.Tar;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -115,10 +114,6 @@ public partial class Player
 				}
 			});
 		}
-	}
-
-	private void ExecuteEnemyCollisionCallback(Rectangle hitBox, Action<IEnemy> callback)
-	{
 	}
 
 	private static int GetDirection(float value)
