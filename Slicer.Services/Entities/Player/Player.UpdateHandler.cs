@@ -34,9 +34,6 @@ public partial class Player
 
 	private void HandleAttack(MouseState mouse)
 	{
-		const float DashFriction = 0.75f;
-		const float KnockbackMultiplier = 1.2f;
-
 		if (physicsHandlerService.Forces.TryGetValue("Attack", out var force)
 				&& force.Velocity != Vector2.Zero)
 		{
