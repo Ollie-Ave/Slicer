@@ -5,7 +5,7 @@ using Slicer.App.Interfaces;
 
 namespace Slicer.App.Entities;
 
-public partial class PlayerNew : IEntity, ITexturedEntity
+public partial class Player : IEntity, ITexturedEntity
 {
     private readonly IPhysicsHandlerService physicsHandlerService;
 
@@ -17,7 +17,7 @@ public partial class PlayerNew : IEntity, ITexturedEntity
 
     private SpriteEffects spriteEffects = SpriteEffects.None;
 
-    public PlayerNew(
+    public Player(
 		IAnimationHandlerServiceBuilder animationHandlerServiceBuilder,
 		IPhysicsHandlerServiceBuilder physicsHandlerServiceBuilder,
 		IEntityManagerService entityManagerService,

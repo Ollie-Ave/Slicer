@@ -8,7 +8,7 @@ using Slicer.App.Models;
 
 namespace Slicer.App.Entities;
 
-public partial class PlayerNew
+public partial class Player
 {
 	public void UpdateHandler(GameTime gameTime)
 	{

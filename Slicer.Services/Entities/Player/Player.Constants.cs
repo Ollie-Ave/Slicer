@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 
 namespace Slicer.App.Entities;
 
-public partial class PlayerNew
+public partial class Player
 {
 	private const float BaseMovementSpeed = 7.5f;
 

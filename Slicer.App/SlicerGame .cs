@@ -36,8 +36,7 @@ public class SlicerGame : Game
     {
         ContentManagerAccessor.SetContentManager(Content);
 
-        // entityManagerService.CreateEntity<Player>("Player");
-        entityManagerService.CreateEntity<PlayerNew>("Player");
+        entityManagerService.CreateEntity<Player>("Player");
 
         entityManagerService.CreateEntity<Goblin>("Goblin");
 
