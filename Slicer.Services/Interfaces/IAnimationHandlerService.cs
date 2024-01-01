@@ -14,4 +14,5 @@ public interface IAnimationHandlerService
     List<Rectangle> LoadAnimationFrames(AnimationMetaData animationMetaData);
 
 	Rectangle GetCurrentAnimationFrame();
+
 }

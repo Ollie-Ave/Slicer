@@ -20,5 +20,9 @@ public partial class Player
 
 	private const float AttackDamage = 10f;
 
+	private const float DashFriction = 0.75f;
+
+	private const float KnockbackMultiplier = 1.2f;
+
 	private static Rectangle HitBoxDimensions => new(110, 80, 140 ,160);
 }

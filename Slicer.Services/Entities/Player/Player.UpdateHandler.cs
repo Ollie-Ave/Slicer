@@ -20,9 +20,9 @@ public partial class Player
 		var mouse = Mouse.GetState();
 
 		HandleAttack(mouse);
-
 		HandleWalking(keyboard);
 		HandleJumping(keyboard);
+
 
 		HandeDisplayDirection(gameTime);
 		HandleAnimations();
@@ -35,6 +35,7 @@ public partial class Player
 	private void HandleAttack(MouseState mouse)
 	{
 		const float DashFriction = 0.75f;
+		const float KnockbackMultiplier = 1.2f;
 
 		if (physicsHandlerService.Forces.TryGetValue("Attack", out var force)
 				&& force.Velocity != Vector2.Zero)
@@ -58,10 +59,6 @@ public partial class Player
 			});
 		}
 
-		if (attackHandlerService.IsAttacking)
-		{
-		}
-
 		var mousePosition = new Vector2(mouse.X, mouse.Y);
 
 		Vector2 rayOrigin = physicsHandlerService.HitBoxPosition + new Vector2(physicsHandlerService.HitBox.Width / 2, physicsHandlerService.HitBox.Height / 2);
@@ -83,7 +80,7 @@ public partial class Player
 				physicsHandlerService.SetForce("Attack", new()
 				{
 					Velocity = ray.Direction * AttackDashSpeed,
-					TerminalVelocity = (new Vector2(AttackDashSpeed), new Vector2(-AttackDashSpeed)),
+					TerminalVelocity = (new Vector2(AttackDashSpeed * KnockbackMultiplier), new Vector2(-AttackDashSpeed * KnockbackMultiplier)),
 				});
 			},
 			() =>
@@ -107,8 +104,7 @@ public partial class Player
 
 						physicsHandlerService.SetForce("Attack", new()
 						{
-							Velocity = direction * AttackDashSpeed,
-							TerminalVelocity = (new Vector2(AttackDashSpeed), new Vector2(-AttackDashSpeed)),
+							Velocity = direction * AttackDashSpeed * KnockbackMultiplier,
 						});
 					}
 				}
@@ -175,6 +171,10 @@ public partial class Player
 			TerminalVelocity = (new Vector2(BaseMovementSpeed, 0), new Vector2(-BaseMovementSpeed, 0)),
 		});
 
+		if (attackHandlerService.IsAttacking)
+		{
+			return;
+		}
 
 		if (keyboard.IsKeyDown(Keys.D))
 		{

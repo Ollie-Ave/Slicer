@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Xna.Framework.Content;
 using Slicer.App.Interfaces;
 
 namespace Slicer.App.Services;

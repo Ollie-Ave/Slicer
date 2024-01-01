@@ -23,7 +23,7 @@ internal class PhysicsHandlerService : IPhysicsHandlerService
 		Position.X + hitBoxDimensions.X,
 		Position.Y + hitBoxDimensions.Y);
 
-	public Vector2 Position { get; private set; }
+	public Vector2 Position { get; set; }
 
 	public Rectangle HitBox { get; private set; }
 

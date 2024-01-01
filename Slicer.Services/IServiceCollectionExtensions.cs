@@ -14,6 +14,7 @@ public static class IServiceCollectionExtensions
 		services.AddTransient<IAnimationHandlerServiceBuilder, AnimationHandlerServiceBuilder>();
 		services.AddTransient<IPhysicsHandlerServiceBuilder, PhysicsHandlerServiceBuilder>();
 		services.AddTransient<IAttackHandlerServiceBuilder, AttackHandlerServiceBuilder>();
+		services.AddTransient<IHealthHandlerServiceBuilder, HealthHandlerServiceBuilder>();
 
 		return services;
 	}

@@ -8,5 +8,5 @@ public interface IEnemy
 
 	void TakeDamage(float damage);
 
-	void SetXPosition(int position);
+    void SetXPosition(int position);
 }

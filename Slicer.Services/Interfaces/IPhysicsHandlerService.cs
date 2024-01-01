@@ -7,7 +7,7 @@ public interface IPhysicsHandlerService
 {
 	Vector2 Velocity { get; }
 
-	Vector2 Position { get; }
+	Vector2 Position { get; set; }
 
 	Vector2 HitBoxPosition { get; }
 
