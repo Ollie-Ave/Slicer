@@ -5,7 +5,7 @@ using Slicer.App.Interfaces;
 
 namespace Slicer.App.Entities;
 
-public partial class GoblinNew : IEntity, ITexturedEntity, IEnemy
+public partial class Goblin : IEntity, ITexturedEntity, IPhysicsEntity, IEnemy
 {
     private readonly IPhysicsHandlerService physicsHandlerService;
 
@@ -17,7 +17,7 @@ public partial class GoblinNew : IEntity, ITexturedEntity, IEnemy
 
     private SpriteEffects spriteEffects = SpriteEffects.None;
 
-    public GoblinNew(
+    public Goblin(
 		IAnimationHandlerServiceBuilder animationHandlerServiceBuilder,
 		IPhysicsHandlerServiceBuilder physicsHandlerServiceBuilder,
 		IHealthHandlerServiceBuilder healthHandlerServiceBuilder,
@@ -43,6 +43,12 @@ public partial class GoblinNew : IEntity, ITexturedEntity, IEnemy
     }
 
     public string? EntityName { get; set; }
+
+	public Vector2 Position
+	{
+		get => physicsHandlerService.Position;
+		set => physicsHandlerService.Position = value;
+	}
 
     public void Draw(SpriteBatch spriteBatch)
     {
@@ -82,10 +88,5 @@ public partial class GoblinNew : IEntity, ITexturedEntity, IEnemy
     public Rectangle GetHitBox()
     {
 		  return physicsHandlerService.HitBox;
-    }
-
-    public void SetXPosition(int position)
-    {
-		  physicsHandlerService.Position = new Vector2(position, physicsHandlerService.Position.Y);
     }
 }

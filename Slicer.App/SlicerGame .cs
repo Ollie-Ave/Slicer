@@ -38,9 +38,8 @@ public class SlicerGame : Game
 
         entityManagerService.CreateEntity<Player>("Player");
 
-        entityManagerService.CreateEntity<GoblinNew>("Goblin");
-        entityManagerService.CreateEntity<GoblinNew>("Goblin")
-            .SetXPosition(600);
+        entityManagerService.CreateEntity<Goblin>("Goblin");
+        entityManagerService.CreateEntity<Goblin>("Goblin", new Vector2(600, 0));
 
         base.Initialize();
     }
@@ -61,10 +60,9 @@ public class SlicerGame : Game
 
         if (Keyboard.GetState().IsKeyDown(Keys.R))
         {
-            entityManagerService.CreateEntity<GoblinNew>("Goblin");
+            entityManagerService.CreateEntity<Goblin>("Goblin");
 
-            entityManagerService.CreateEntity<GoblinNew>("Goblin")
-                .SetXPosition(600);
+            entityManagerService.CreateEntity<Goblin>("Goblin", new Vector2(600, 0));
         }
 
         var entities = entityManagerService

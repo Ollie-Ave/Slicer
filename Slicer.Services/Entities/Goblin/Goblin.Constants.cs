@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 
 namespace Slicer.App.Entities;
 
-public partial class GoblinNew
+public partial class Goblin
 {
 	private const int SpriteScaling = 2;
 

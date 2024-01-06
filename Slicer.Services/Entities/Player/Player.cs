@@ -5,7 +5,7 @@ using Slicer.App.Interfaces;
 
 namespace Slicer.App.Entities;
 
-public partial class Player : IEntity, ITexturedEntity
+public partial class Player : IEntity, ITexturedEntity, IPhysicsEntity
 {
     private readonly IPhysicsHandlerService physicsHandlerService;
 
@@ -34,6 +34,12 @@ public partial class Player : IEntity, ITexturedEntity
     }
 
 	public string? EntityName { get; set; }
+
+	public Vector2 Position
+	{
+		get => physicsHandlerService.Position;
+		set => physicsHandlerService.Position = value;
+	}
 
 	public void Draw(SpriteBatch spriteBatch)
 	{

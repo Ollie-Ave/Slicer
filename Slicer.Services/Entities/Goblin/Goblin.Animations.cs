@@ -4,7 +4,7 @@ using Slicer.App.Models;
 
 namespace Slicer.App.Entities;
 
-public partial class GoblinNew
+public partial class Goblin
 {
 	private static Vector2 DefaultFrameSize = new(150, 150);
 

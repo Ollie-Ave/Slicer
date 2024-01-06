@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Xna.Framework;
 using Slicer.App.Interfaces;
 
 namespace Slicer.App.Services;
@@ -55,6 +56,16 @@ internal class EntityManagerService : IEntityManagerService
 		entities.Add(entityName, entity);
 
 		return entity;
+	}
+
+	public T CreateEntity<T>(string entityName, Vector2 initialPosition)
+		where T :  IPhysicsEntity, IEntity
+	{
+		var entity = (IPhysicsEntity)CreateEntity<T>(entityName);
+
+		entity.Position = initialPosition;
+
+		return (T)entity;
 	}
 
     public void KillEntity(string entityName)

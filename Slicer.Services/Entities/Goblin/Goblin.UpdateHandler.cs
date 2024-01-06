@@ -3,12 +3,8 @@ using Slicer.App.Accessors;
 
 namespace Slicer.App.Entities;
 
-public partial class GoblinNew
+public partial class Goblin
 {
-	private bool currentAnimationIsDeath => animationHandlerService
-			.GetCurrentAnimationData()
-			.CurrentAnimation.Texture == "Goblin/_Death";
-
 	public void TakeDamage(float damage)
 	{
 		healthHandlerService.TakeDamage(damage);

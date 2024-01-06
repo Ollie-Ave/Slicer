@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework;
 
 namespace Slicer.App.Interfaces;
 
@@ -11,6 +10,9 @@ public interface IEntityManagerService
 
 	T CreateEntity<T>(string entityName)
 		where T : IEntity;
+
+	T CreateEntity<T>(string entityName, Vector2 initialPosition)
+		where T : IEntity, IPhysicsEntity;
 
 	void KillEntity(string entityName);
 }
