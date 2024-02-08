@@ -41,6 +41,11 @@ public partial class Player : IEntity, ITexturedEntity, IPhysicsEntity
 		set => physicsHandlerService.Position = value;
 	}
 
+	public Vector2 HitBoxPosition
+	{
+		get => physicsHandlerService.HitBoxPosition;
+	}
+
 	public void Draw(SpriteBatch spriteBatch)
 	{
 		ArgumentNullException.ThrowIfNull(Textures);

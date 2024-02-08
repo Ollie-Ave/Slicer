@@ -24,7 +24,7 @@ public partial class Player
 		HandleJumping(keyboard);
 
 
-		HandeDisplayDirection(gameTime);
+		HandleDisplayDirection();
 		HandleAnimations();
 
 		animationHandlerService.HandleAnimationState(gameTime);
@@ -225,7 +225,7 @@ public partial class Player
 		}
 	}
 
-	private void HandeDisplayDirection(GameTime gameTime)
+	private void HandleDisplayDirection()
 	{
 		if (physicsHandlerService.Velocity.X > 0)
 		{

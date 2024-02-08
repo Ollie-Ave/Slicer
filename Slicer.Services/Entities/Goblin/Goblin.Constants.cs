@@ -8,7 +8,9 @@ public partial class Goblin
 
 	private const int HurtAnimationCooldownDuration = 310;
 
-	private const float InitialHealth = 30f;
+	private const float InitialHealth = 20f;
+
+    private const float WalkSpeed = 5;
 
 	private static Rectangle HitBoxDimensions = new(110, 100, 75, 100);
 }

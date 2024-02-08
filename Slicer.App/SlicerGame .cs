@@ -13,8 +13,6 @@ public class SlicerGame : Game
 {
     private readonly IEntityManagerService entityManagerService;
 
-    private GraphicsDeviceManager graphics;
-
     private SpriteBatch? spriteBatch;
 
     private IGameWorldHandler gameWorldHandler;
@@ -34,14 +32,13 @@ public class SlicerGame : Game
         IsMouseVisible = true;
     }
 
+    public GraphicsDeviceManager graphics {get; private set;}
+
     protected override void Initialize()
     {
         ContentManagerAccessor.SetContentManager(Content);
 
-        entityManagerService.CreateEntity<Player>("Player");
-
-        entityManagerService.CreateEntity<Goblin>("Goblin");
-        entityManagerService.CreateEntity<Goblin>("Goblin", new Vector2(600, 0));
+        entityManagerService.CreateEntity<Player>(Constants.EntityNames.Player);
 
         base.Initialize();
     }
