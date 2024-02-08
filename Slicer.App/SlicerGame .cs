@@ -2,7 +2,6 @@
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using MonoGame;
 using Slicer.App.Accessors;
 using Slicer.App.Entities;
@@ -18,9 +17,12 @@ public class SlicerGame : Game
 
     private SpriteBatch? spriteBatch;
 
-    public SlicerGame(IEntityManagerService entityManagerService)
+    private IGameWorldHandler gameWorldHandler;
+
+    public SlicerGame(IEntityManagerService entityManagerService, IGameWorldHandler gameWorldHandler)
     {
         this.entityManagerService = entityManagerService;
+        this.gameWorldHandler = gameWorldHandler;
 
         graphics = new GraphicsDeviceManager(this)
         {
@@ -55,15 +57,7 @@ public class SlicerGame : Game
 
     protected override void Update(GameTime gameTime)
     {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-            Exit();
-
-        if (Keyboard.GetState().IsKeyDown(Keys.R))
-        {
-            entityManagerService.CreateEntity<Goblin>("Goblin");
-
-            entityManagerService.CreateEntity<Goblin>("Goblin", new Vector2(600, 0));
-        }
+        this.gameWorldHandler.UpdateHandler(gameTime, this);
 
         var entities = entityManagerService
             .GetAllEntities()

@@ -1,5 +1,6 @@
 using System.Reflection;
 using Slicer.App.Builders;
+using Slicer.App.Entities;
 using Slicer.App.Interfaces;
 using Slicer.App.Services;
 
@@ -9,6 +10,7 @@ public static class IServiceCollectionExtensions
 {
 	public static IServiceCollection AddSlicerGameServices(this IServiceCollection services)
 	{
+        services.AddSingleton<IGameWorldHandler, GameWorldHandler>();
 		services.AddSingleton<IEntityManagerService, EntityManagerService>();
 
 		services.AddTransient<IAnimationHandlerServiceBuilder, AnimationHandlerServiceBuilder>();
