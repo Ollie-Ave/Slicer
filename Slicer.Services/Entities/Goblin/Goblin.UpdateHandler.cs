@@ -6,19 +6,19 @@ namespace Slicer.App.Entities;
 
 public partial class Goblin
 {
-	public void TakeDamage(float damage)
-	{
-		healthHandlerService.TakeDamage(damage);
-	}
+    public void TakeDamage(float damage)
+    {
+        healthHandlerService.TakeDamage(damage);
+    }
 
-	public void UpdateHandler(GameTime gameTime)
-	{
-		if (GameEnvironment.IsDebugMode)
-		{
-			DrawHitBox();
-		}
+    public void UpdateHandler(GameTime gameTime)
+    {
+        if (GameEnvironment.IsDebugMode)
+        {
+            DrawHitBox();
+        }
 
-		HandleAnimations();
+        HandleAnimations();
 
         if (!this.healthHandlerService.IsDying)
         {
@@ -33,65 +33,87 @@ public partial class Goblin
             });
         }
 
-		animationHandlerService.HandleAnimationState(gameTime);
-		physicsHandlerService.HandlePhysicsState(gameTime);
-		healthHandlerService.HandleHealthState(gameTime);
-	}
+        animationHandlerService.HandleAnimationState(gameTime);
+        physicsHandlerService.HandlePhysicsState(gameTime);
+        healthHandlerService.HandleHealthState(gameTime);
+    }
 
-	private void HandleDisplayDirection()
-	{
-		if (physicsHandlerService.Velocity.X > 0)
-		{
-			spriteEffects = SpriteEffects.None;
-		}
-		else if (physicsHandlerService.Velocity.X < 0)
-		{
-			spriteEffects = SpriteEffects.FlipHorizontally;
-		}
-	}
+    private void HandleDisplayDirection()
+    {
+        if (physicsHandlerService.Velocity.X > 0)
+        {
+            spriteEffects = SpriteEffects.None;
+        }
+        else if (physicsHandlerService.Velocity.X < 0)
+        {
+            spriteEffects = SpriteEffects.FlipHorizontally;
+        }
+    }
 
     private void HandleBehaviour()
     {
+        if (!healthHandlerService.CanTakeDamage)
+        {
+            physicsHandlerService.SetForce("Walking", new()
+            {
+                Velocity = Vector2.Zero,
+            });
+
+            return;
+        }
+
         Player player = (Player)this.entityManagerService.GetEntity(Constants.EntityNames.Player);
 
-        Vector2 direction = Vector2.Normalize(player.HitBoxPosition - physicsHandlerService.HitBoxPosition );
+        Vector2 direction = Vector2.Normalize(player.HitBoxPosition - physicsHandlerService.HitBoxPosition);
+
+
 
         physicsHandlerService.SetForce("Walking", new()
         {
-            Velocity = new Vector2(direction.X, 0) * WalkSpeed,
+            Velocity = new Vector2(-GetDirection(direction.X), 0) * WalkSpeed,
         });
     }
 
-	private void HandleAnimations()
-	{
+    private void HandleAnimations()
+    {
 
-		if (healthHandlerService.IsDying)
-		{
-			animationHandlerService.SetCurrentAnimation("Goblin/_Death");
-		}
-		else if (!healthHandlerService.CanTakeDamage)
-		{
-			animationHandlerService.SetCurrentAnimation("Goblin/_TakeHit");
-		}
-		else if (physicsHandlerService.Velocity.X > 0)
-		{
-			animationHandlerService.SetCurrentAnimation("Goblin/_Run");
-		}
-		else if (physicsHandlerService.Velocity.X < 0)
-		{
-			animationHandlerService.SetCurrentAnimation("Goblin/_Run");
-		}
-		else
-		{
-			animationHandlerService.SetCurrentAnimation("Goblin/_Idle");
-		}
-	}
+        if (healthHandlerService.IsDying)
+        {
+            animationHandlerService.SetCurrentAnimation("Goblin/_Death");
+        }
+        else if (!healthHandlerService.CanTakeDamage)
+        {
+            animationHandlerService.SetCurrentAnimation("Goblin/_TakeHit");
+        }
+        else if (physicsHandlerService.Velocity.X > 0)
+        {
+            animationHandlerService.SetCurrentAnimation("Goblin/_Run");
+        }
+        else if (physicsHandlerService.Velocity.X < 0)
+        {
+            animationHandlerService.SetCurrentAnimation("Goblin/_Run");
+        }
+        else
+        {
+            animationHandlerService.SetCurrentAnimation("Goblin/_Idle");
+        }
+    }
 
-	private void DrawHitBox()
-	{
-		var hitBoxDebugBox = entityManagerService.CreateEntity<SingleFrameDebugBox>("Player_Hitbox");
+    private void DrawHitBox()
+    {
+        var hitBoxDebugBox = entityManagerService.CreateEntity<SingleFrameDebugBox>("Player_Hitbox");
 
-		hitBoxDebugBox.Colour = Color.Green;
-		hitBoxDebugBox.Bounds = physicsHandlerService.HitBox;
-	}
+        hitBoxDebugBox.Colour = Color.Green;
+        hitBoxDebugBox.Bounds = physicsHandlerService.HitBox;
+    }
+
+    private static int GetDirection(float value)
+    {
+        return value switch
+        {
+            > 0 => -1,
+            < 0 => 1,
+            _ => 0,
+        };
+    }
 }
